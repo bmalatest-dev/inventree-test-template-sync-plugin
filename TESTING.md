@@ -1,47 +1,37 @@
-# Local Test Checklist
+# v0.2.0 Local Test Checklist
 
-## Prerequisites
-
-- Plugin support enabled
-- Plugin installed and enabled
-- A source Part which is testable
-- An independent target Part which is testable
-- User has permission to add and change Part Test Templates
-
-## Suggested first test
-
-Use a disposable target Part before testing against production-like data.
-
-### Dry run
-
-POST to:
+Use:
 
 ```text
-/api/action/
+Source Part: Test-part = 1
+Target Part: Test-part-conformal = 5
 ```
 
-Payload:
+## Test 1 - Dry run after SW was renamed to BU
 
-```json
-{
-  "action": "sync_test_templates",
-  "data": {
-    "source_part": 1,
-    "target_part": 2,
-    "dry_run": true
-  }
-}
+```bash
+curl -X POST http://localhost:8000/api/action/ \
+  -H "Content-Type: application/json" \
+  -u admin:admin \
+  -d '{
+    "action": "sync_test_templates",
+    "data": {
+      "source_part": 1,
+      "target_part": 5,
+      "dry_run": true,
+      "disable_stale": true
+    }
+  }'
 ```
 
 Expected:
 
-- no database changes
-- `would_create` contains templates missing on the target
-- `would_update` contains templates which differ
-- `unchanged` contains matching templates
-- `target_only` contains templates only present on the target
+- `VI` should be unchanged
+- `BU` should already exist if v0.1.0 created it, otherwise `would_create`
+- `SW` should appear under `target_only`
+- if `SW` is still enabled, it should also appear under `would_disable`
 
-### Actual sync
+## Test 2 - Actual sync
 
 Run the same request with:
 
@@ -51,33 +41,53 @@ Run the same request with:
 
 Expected:
 
-- missing templates are created
-- changed templates are updated
-- matching templates remain untouched
-- target-only templates remain untouched
+- `SW` becomes disabled
+- `SW` is not deleted
+- `VI` remains enabled
+- `BU` remains enabled
 
-## Important inherited-template test
+## Test 3 - Historical preservation
 
-This is important for the conformal-coating use case.
+If any Stock Item has an existing result against `SW`, verify after the sync:
 
-Create:
+- the result is still present
+- the old SW template still exists
+- SW is disabled for future testing
 
-```text
-Generic Template
-└── Standard PCBA
+## Test 4 - Same-key update
+
+Modify a field which does not change the source template key, for example:
+
+- Description
+- Required
+- Requires Value
+- Requires Attachment
+- Choices
+
+Dry run again.
+
+Expected:
+
+- template appears under `would_update`
+
+Perform actual sync.
+
+Expected:
+
+- template appears under `updated`
+- no template is deleted
+
+## Test 5 - Disable stale behavior off
+
+Run:
+
+```json
+{
+  "disable_stale": false
+}
 ```
 
-Put one or more test templates on `Generic Template`, not directly on `Standard PCBA`.
+Expected:
 
-Use `Standard PCBA` as `source_part`.
-
-The dry run should still show those inherited templates as templates to copy to the independent target Part.
-
-## Regression checks
-
-- Source = target should fail
-- Missing source Part should fail
-- Missing target Part should fail
-- Non-testable target should fail
-- Invalid `dry_run` value should fail
-- Read-only user should be able to dry-run but should not be able to perform a write sync
+- target-only templates are reported
+- none are disabled

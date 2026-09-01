@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "inventree-test-template-sync"
-version = "0.1.0"
-description = "Lightweight InvenTree plugin to manually synchronize effective test templates between independent parts."
+version = "0.2.0"
+description = "Lightweight InvenTree plugin to manually synchronize effective test templates between independent parts while preserving history."
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}

@@ -1,19 +1,26 @@
 # Changelog
 
+## 0.3.0 - 2026-09-01
+
+- Add `UserInterfaceMixin`
+- Add a Part-page "Test Template Sync" panel
+- Add source Part search and selection
+- Add preview workflow before synchronization
+- Show Create / Update / Disable / Unchanged results
+- Add confirmation before applying synchronization
+- Use the authenticated InvenTree frontend API session
+- Keep v0.2.0 historical-safe behavior unchanged
+- Keep plugin lightweight with no models, migrations, scheduler, or background worker
+
 ## 0.2.0 - 2026-09-01
 
 - Preserve historical test templates by disabling stale templates instead of deleting them
-- Add `disable_stale` option, defaulting to true
+- Add `disable_stale` option
 - Add `would_disable` and `disabled` result fields
-- Leave already-disabled stale templates unchanged
-- Preserve all historical test-result relationships
-- Continue to create missing templates and update same-key templates
-- Keep plugin lightweight: no database models, migrations, scheduler, background tasks, or frontend
+- Preserve historical test-result relationships
 
 ## 0.1.0 - 2026-09-01
 
-- Initial release
-- Manual ActionMixin endpoint
+- Initial ActionMixin synchronization backend
 - Effective inherited-template discovery
 - Dry-run support
-- Create / update / unchanged / target-only reporting

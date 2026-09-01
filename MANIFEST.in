@@ -1,0 +1,5 @@
+include static/test_template_sync.js
+include README.md
+include CHANGELOG.md
+include TESTING.md
+include LICENSE

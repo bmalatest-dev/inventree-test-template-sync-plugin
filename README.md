@@ -1,12 +1,12 @@
 # InvenTree Test Template Sync
 
-Version **0.2.0**
+Version **0.3.0**
 
-A deliberately small InvenTree plugin for manually synchronizing effective Part Test Templates from one Part to another.
+A lightweight InvenTree plugin for synchronizing effective Part Test Templates from a source Part to an independent target Part.
 
 ## Purpose
 
-Use this when two Parts should share the same testing requirements but should **not** be connected through InvenTree's Template / Variant hierarchy.
+This plugin is intended for cases where two Parts should share testing requirements without forcing them into the same InvenTree Template / Variant hierarchy.
 
 Example:
 
@@ -20,71 +20,107 @@ Test-part-conformal
     └── conformal coating service
 ```
 
-`Test-part-conformal` remains an independent Part so that its BOM correctly models the physical conversion, while this plugin copies the effective tests from `Test-part`.
+The conformal-coated Part remains independent, preserving the correct manufacturing / BOM relationship, while its tests can be synchronized from `Test-part`.
 
-## Version 0.2.0 behavior
+## v0.3.0
 
-The plugin:
+v0.3.0 adds a **Part-page user interface**.
 
-- reads effective source test templates, including inherited templates
-- creates missing target templates
-- updates existing same-key target templates
-- leaves identical templates unchanged
-- **never deletes test templates**
-- disables stale target templates instead of deleting them
-- preserves historical test-result relationships
-- supports dry-run mode
-- has no scheduler, background worker, custom database model, migration, or frontend bundle
+On a Part detail page, users can:
 
-## Important historical behavior
+1. Search for a source Part
+2. Select the source Part
+3. Preview the synchronization
+4. Review templates which will be created, updated, disabled, or left unchanged
+5. Run the synchronization from the UI
 
-If a source test is renamed, its InvenTree key normally changes.
+No terminal access or API credentials are required for normal use.
+
+## Historical test preservation
+
+The synchronization engine keeps the v0.2.0 behavior:
+
+- missing source tests are created on the target
+- same-key tests are updated
+- identical tests are left unchanged
+- stale target tests are **disabled, not deleted**
+- historical test results remain linked to old disabled templates
 
 Example:
 
 ```text
-Source:
+Source changes:
 SW -> BU
-```
 
-After synchronization:
-
-```text
-Target:
+Target after synchronization:
 VI    enabled
-SW    disabled
-BU    enabled
+SW    disabled / historical
+BU    enabled / current
 ```
 
-The old `SW` test template is retained, so historical results linked to it remain available.
+## Lightweight design
 
-## Safety / ownership behavior
+The plugin still has:
 
-Version 0.2.0 intentionally uses a conservative rule:
+- no custom database models
+- no migrations
+- no scheduler
+- no background worker
+- no polling
+- no recurring tasks
 
-- Any **target-only** test template is treated as stale and is eligible to be disabled.
-- It is **never deleted**.
-- If it is already disabled, it is left unchanged.
+The UI is a single static JavaScript file loaded only when InvenTree requests the plugin panel.
 
-This is suitable when the target Part's test templates are intended to mirror the source Part.
+## Required InvenTree setting
 
-If you expect legitimate target-specific test templates, do not use `disable_stale=true` until plugin-managed ownership tracking is added in a future version.
-
-## API Action
-
-Action:
+InvenTree's global plugin UI setting must be enabled:
 
 ```text
-sync_test_templates
+ENABLE_PLUGINS_INTERFACE = enabled
 ```
 
-Endpoint:
+If the backend plugin is active but the panel does not appear, check this setting first.
+
+## UI workflow
+
+Open the **target Part** (for example the conformal-coated board).
+
+A panel named:
+
+```text
+Test Template Sync
+```
+
+should appear on the Part page.
+
+Use the panel to search for and select the source Part, then click:
+
+```text
+Preview Sync
+```
+
+The panel shows:
+
+- Create
+- Update
+- Disable (history preserved)
+- Unchanged
+
+After review, click:
+
+```text
+Synchronize Test Templates
+```
+
+The backend always performs the same permission checks as the API action.
+
+## API remains available
+
+The tested API action remains available:
 
 ```text
 POST /api/action/
 ```
-
-### Dry run
 
 ```json
 {
@@ -98,40 +134,8 @@ POST /api/action/
 }
 ```
 
-### Actual synchronization
+## Safety
 
-```json
-{
-  "action": "sync_test_templates",
-  "data": {
-    "source_part": 1,
-    "target_part": 5,
-    "dry_run": false,
-    "disable_stale": true
-  }
-}
-```
+The UI intentionally does not expose a "delete stale tests" option.
 
-## Result fields
-
-The action reports:
-
-- `would_create`
-- `would_update`
-- `would_disable`
-- `created`
-- `updated`
-- `disabled`
-- `unchanged`
-- `target_only`
-
-## Recommended workflow
-
-1. Run with `dry_run=true`
-2. Review `would_create`, `would_update`, and `would_disable`
-3. If correct, rerun with `dry_run=false`
-4. Verify the target Part in InvenTree
-
-## Current scope
-
-Version 0.2.0 intentionally has no Part-page button. It remains API-only until the synchronization behavior is fully validated.
+Stale templates are disabled so historical test records remain intact.

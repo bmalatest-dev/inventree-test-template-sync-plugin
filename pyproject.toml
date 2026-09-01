@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inventree-test-template-sync"
+version = "0.1.0"
+description = "Lightweight InvenTree plugin to manually synchronize effective test templates between independent parts."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+  {name = "Per Vices Corporation"}
+]
+keywords = ["inventree", "plugin", "test-template", "manufacturing"]
+
+[project.entry-points."inventree_plugins"]
+TestTemplateSyncPlugin = "inventree_test_template_sync.plugin:TestTemplateSyncPlugin"
+
+[tool.setuptools]
+packages = ["inventree_test_template_sync"]

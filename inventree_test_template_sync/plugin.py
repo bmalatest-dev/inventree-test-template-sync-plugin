@@ -22,7 +22,7 @@ class TestTemplateSyncPlugin(ActionMixin, UserInterfaceMixin, InvenTreePlugin):
         "Synchronize effective test templates between independent InvenTree "
         "Parts while preserving historical templates."
     )
-    VERSION = "0.3.0"
+    VERSION = "0.3.1"
     AUTHOR = "Per Vices Corporation"
     LICENSE = "MIT"
 

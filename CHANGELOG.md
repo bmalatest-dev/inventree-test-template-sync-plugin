@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.1 - 2026-09-01
+
+- Fix plugin UI static-file packaging
+- Move `test_template_sync.js` into `inventree_test_template_sync/static/`
+- Package the UI asset as Python package data
+- Remove the incorrect setuptools `data-files` install into `/usr/local/static`
+- No synchronization logic changes from v0.3.0
+- No UI behavior changes from the manually validated v0.3.0 JavaScript
+
 ## 0.3.0 - 2026-09-01
 
 - Add `UserInterfaceMixin`

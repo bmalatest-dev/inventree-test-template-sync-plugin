@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "inventree-test-template-sync"
-version = "0.3.0"
+version = "0.3.1"
 description = "Lightweight InvenTree plugin to synchronize effective test templates between independent parts with a Part-page UI."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -21,5 +21,5 @@ TestTemplateSyncPlugin = "inventree_test_template_sync.plugin:TestTemplateSyncPl
 packages = ["inventree_test_template_sync"]
 include-package-data = true
 
-[tool.setuptools.data-files]
-"static/plugins/test-template-sync" = ["static/test_template_sync.js"]
+[tool.setuptools.package-data]
+inventree_test_template_sync = ["static/*.js"]

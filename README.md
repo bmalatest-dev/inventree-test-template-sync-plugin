@@ -1,6 +1,6 @@
 # InvenTree Test Template Sync
 
-Version **0.3.0**
+Version **0.3.1**
 
 A lightweight InvenTree plugin for synchronizing effective Part Test Templates from a source Part to an independent target Part.
 
@@ -139,3 +139,20 @@ POST /api/action/
 The UI intentionally does not expose a "delete stale tests" option.
 
 Stale templates are disabled so historical test records remain intact.
+
+
+## v0.3.1 packaging correction
+
+The UI JavaScript now ships inside the Python plugin package:
+
+```text
+inventree_test_template_sync/static/test_template_sync.js
+```
+
+This allows InvenTree's plugin static-file collector to copy it into the configured static root and serve it at:
+
+```text
+/static/plugins/test-template-sync/test_template_sync.js
+```
+
+The previous `data-files` rule which installed the file into `/usr/local/static/...` has been removed.

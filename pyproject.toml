@@ -3,20 +3,23 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "inventree-production-planning"
-version = "0.2.5"
-description = "V2 recursive production planning forecast for InvenTree Build Orders."
+name = "inventree-test-template-sync"
+version = "0.3.1"
+description = "Lightweight InvenTree plugin to synchronize effective test templates between independent parts with a Part-page UI."
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
-authors = [{name = "Per Vices Corporation"}]
+authors = [
+  {name = "Per Vices Corporation"}
+]
+keywords = ["inventree", "plugin", "test-template", "manufacturing"]
 
 [project.entry-points."inventree_plugins"]
-ProductionPlanningPlugin = "inventree_production_planning.plugin:ProductionPlanningPlugin"
+TestTemplateSyncPlugin = "inventree_test_template_sync.plugin:TestTemplateSyncPlugin"
 
 [tool.setuptools]
-packages = ["inventree_production_planning"]
+packages = ["inventree_test_template_sync"]
 include-package-data = true
 
 [tool.setuptools.package-data]
-inventree_production_planning = ["static/*.js"]
+inventree_test_template_sync = ["static/*.js"]
